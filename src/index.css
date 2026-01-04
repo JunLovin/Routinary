@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter Tight", sans-serif;
+  --font-gloria: "Gloria Hallelujah", cursive;
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 10px;
+    border: 1px solid #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #404040;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #262626 #0a0a0a;
+  }
+}
