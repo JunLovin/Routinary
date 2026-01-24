@@ -1,9 +1,9 @@
-import { ArrowRight, CalendarDays } from "lucide-react"
-import { Link } from "react-router-dom";
+import { ArrowRight, CalendarDays } from 'lucide-react';
+import { Link, Links } from 'react-router-dom';
 
 export default function Header() {
   return (
-  <>
+    <>
       <header className="w-4xl h-18 items-center bg-white font-medium px-4 rounded-xl flex justify-between z-10 max-xl:w-[95%] max-xl:mx-auto">
         <div className="header-logo text-black">
           <Link to="/">
@@ -25,14 +25,16 @@ export default function Header() {
           </Link>
         </div>
         <div className="header-cta">
-          <button className="rounded-md h-10 relative pl-4 pr-1 cursor-pointer py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white flex gap-4 items-center">
-            Get Started
-            <div className="next-icon w-max h-max rounded-md bg-white p-1 text-orange-400">
-              <ArrowRight />
-            </div>
-          </button>
+          <Link to="/auth/login">
+            <button className="rounded-md h-10 relative pl-4 pr-1 cursor-pointer py-2 bg-linear-to-r from-orange-400 to-orange-600 text-white flex gap-4 items-center">
+        Get Started
+              <div className="next-icon w-max h-max rounded-md bg-white p-1 text-orange-400">
+                <ArrowRight />
+              </div>
+            </button>
+          </Link>
         </div>
       </header>
-  </>
-  )
+    </>
+  );
 }

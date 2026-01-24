@@ -35,3 +35,20 @@
     scrollbar-color: #262626 #0a0a0a;
   }
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 9999s ease-out 0s;
+  -webkit-text-fill-color: #525252 !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+}
+
+.hero-title .hero-cta-title div {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
