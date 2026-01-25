@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { registerFormSchema, type RegisterFormFields } from './schema/register.schema';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/shared/hooks/useAuth';
 
 export default function Register() {
+  const navigate = useNavigate();
+  const { register: authRegister } = useAuth();
   const {
     register,
-    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormFields>({
@@ -16,22 +19,7 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<RegisterFormFields> = async (data) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError('root', { type: 'server', message: errorData.message || 'Registration failed' });
-        return;
-      }
-
-      const responseData = await response.json();
-      console.log('Registration successful:', responseData);
+      authRegister(data, navigate);
     } catch (error) {
       console.error(error);
     }
@@ -87,6 +75,7 @@ export default function Register() {
               type="password"
               className="border-b-2 outline-0 w-full focus:border-orange-500 border-neutral-200 text-neutral-600 px-1 py-2 transition-all duration-300 placeholder:text-neutral-300"
               placeholder="••••••"
+              autoComplete="off"
             />
             {errors.password && (
               <span className="text-sm text-red-500 mt-1">{errors.password.message}</span>
@@ -101,6 +90,7 @@ export default function Register() {
               type="password"
               className="border-b-2 outline-0 w-full focus:border-orange-500 border-neutral-200 text-neutral-600 px-1 py-2 transition-all duration-300 placeholder:text-neutral-300"
               placeholder="••••••"
+              autoComplete="off"
             />
             {errors.confirmPassword && (
               <span className="text-sm text-red-500 mt-1">{errors.confirmPassword.message}</span>

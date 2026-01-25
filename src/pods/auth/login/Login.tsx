@@ -1,13 +1,16 @@
 import GoogleIcon from '@/assets/GoogleIcon';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginFormSchema, type LoginFormFields } from './schema/login.schema';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuth } from '@/shared/hooks/useAuth';
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const {
     register,
-    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormFields>({
@@ -16,22 +19,7 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError('root', { type: 'server', message: errorData.message || 'Login failed' });
-        return;
-      }
-
-      const responseData = await response.json();
-      console.log('Login successful:', responseData);
+      login(data, navigate);
     } catch (error) {
       console.error(error);
     }
@@ -58,6 +46,7 @@ export default function Login() {
               id="email"
               className="border-b-2 outline-0 w-full focus:border-orange-500 border-neutral-200 text-neutral-600 px-1 py-2 transition-all duration-300 placeholder:text-neutral-300"
               placeholder="email@domain.com"
+              autoComplete="off"
             />
             {errors.email && (
               <span className="text-sm text-red-500 mt-1">{errors.email.message}</span>
@@ -72,6 +61,7 @@ export default function Login() {
               type="password"
               className="border-b-2 outline-0 w-full focus:border-orange-500 border-neutral-200 text-neutral-600 px-1 py-2 transition-all duration-300 placeholder:text-neutral-300"
               placeholder="••••••"
+              autoComplete="off"
             />
             {errors.password && (
               <span className="text-sm text-red-500 mt-1">{errors.password.message}</span>
