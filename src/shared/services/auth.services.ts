@@ -1,11 +1,18 @@
-import type { User } from '../models/user.model';
+import type { User } from '@/shared/models/user.model';
 
-interface LoginResponse {
+export interface LoginResponse {
   token: string;
   user: User;
 }
 
-export const registerService = async (data: { name?: string; email: string; password: string }): Promise<User> => {
+export interface LoginFields {
+  email: string;
+  password: string;
+}
+
+export type RegisterFields = LoginFields & { name?: string };
+
+export const registerService = async (data: RegisterFields): Promise<User> => {
   try {
     const response = await fetch('http://localhost:3000/api/auth/register', {
       method: 'POST',
@@ -24,11 +31,12 @@ export const registerService = async (data: { name?: string; email: string; pass
     const resJson: Promise<User> = await response.json();
     return resJson;
   } catch (error) {
+    console.error(error);
     throw error;
   }
 };
 
-export const loginService = async (data: { email: string; password: string }): Promise<LoginResponse> => {
+export const loginService = async (data: LoginFields): Promise<LoginResponse> => {
   try {
     const response = await fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
@@ -47,6 +55,7 @@ export const loginService = async (data: { email: string; password: string }): P
     const resJson: Promise<LoginResponse> = await response.json();
     return resJson;
   } catch (error) {
+    console.error(error);
     throw error;
   }
 };

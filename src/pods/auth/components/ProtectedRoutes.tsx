@@ -10,7 +10,7 @@ export default function ProtectedRoutes() {
     if (!isAuthenticated) {
       navigate('/auth/login', { replace: true });
     }
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   return <Outlet />;
 }

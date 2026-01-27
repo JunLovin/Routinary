@@ -33,7 +33,7 @@ export default function Login() {
     if (isAuthenticated && user) {
       navigate(`/main/${user.id}/dashboard`, { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { User } from '../models/user.model';
+import type { User } from '@/shared/models/user.model';
 import type { NavigateFunction } from 'react-router-dom';
-import { loginService, registerService } from '../services/auth.services';
+import { loginService, registerService } from '@/shared/services/auth.services';
 
 interface AuthContextType {
   user: User | null;
@@ -21,25 +21,20 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = user !== null && token !== null;
 
   const register = async (data: { name?: string; email: string; password: string }, navigate: NavigateFunction) => {
-    try {
-      const user = await registerService(data);
+    const user = await registerService(data);
 
-      setUser(user);
-      navigate('/auth/login', { replace: true });
-    } catch (error) {
-      throw error;
-    }
+    setUser(user);
+    navigate('/auth/login', { replace: true });
   };
 
   const login = async (data: { email: string, password: string }, navigate: NavigateFunction) => {
-    try {
-      const { token, user } = await loginService(data);
+    const { token, user } = await loginService(data);
+    if (token && user) {
       setToken(token);
       setUser(user);
-      navigate(`/main/${user?.id!}`, { replace: true });
-    } catch (error) {
-      throw error;
+      navigate(`/main/${user.id}`, { replace: true });
     }
+    return;
   };
 
   const logout = (navigate: NavigateFunction) => {

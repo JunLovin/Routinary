@@ -1,9 +1,18 @@
 import { useAuth } from '@/shared/hooks/useAuth';
 import { toTitleCase } from '@/shared/utils/utils';
 import { ChevronUp, PanelRight, SquarePen } from 'lucide-react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Sidenav() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      logout(navigate);
+    }
+  }, [navigate, user]);
 
   return (
     <>
@@ -34,7 +43,7 @@ export default function Sidenav() {
             </div>
             <div className="user-info flex flex-col gap-1 items-start justify-center w-full overflow-x-hidden">
               <span className="text-slate-100 text-sm">{toTitleCase(user?.name || 'User')}</span>
-              <span className="text-sm">{user?.email}</span>
+              <span className="text-sm">{user?.email || ''}</span>
             </div>
           </div>
         </div>
