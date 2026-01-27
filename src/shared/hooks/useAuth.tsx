@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { User } from '../models/user.model';
 import type { NavigateFunction } from 'react-router-dom';
+import { loginService, registerService } from '../services/auth.services';
 
 interface AuthContextType {
   user: User | null;
@@ -21,53 +22,23 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (data: { name?: string; email: string; password: string }, navigate: NavigateFunction) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const user = await registerService(data);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Something went wrong:', errorData);
-        return;
-      }
-
-      const user = await response.json();
       setUser(user);
       navigate('/auth/login', { replace: true });
-
-      console.log('USER REGISTERED:', user);
     } catch (error) {
-      console.error('Something went wrong:', (error as Error).message);
+      throw error;
     }
   };
 
   const login = async (data: { email: string, password: string }, navigate: NavigateFunction) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Something went wrong:', errorData);
-        return;
-      }
-
-      const responseData = await response.json();
-
-      setToken(responseData.token);
-      setUser(responseData.user);
-      navigate('/', { replace: true });
+      const { token, user } = await loginService(data);
+      setToken(token);
+      setUser(user);
+      navigate(`/main/${user?.id!}`, { replace: true });
     } catch (error) {
-      console.error('Something went wrong:', (error as Error).message);
+      throw error;
     }
   };
 

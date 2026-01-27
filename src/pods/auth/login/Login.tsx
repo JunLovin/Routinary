@@ -4,14 +4,15 @@ import { loginFormSchema, type LoginFormFields } from './schema/login.schema';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/shared/hooks/useAuth';
+import { useEffect } from 'react';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
-
+  const { login, isAuthenticated, user } = useAuth();
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormFields>({
     resolver: zodResolver(loginFormSchema),
@@ -19,11 +20,20 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
     try {
-      login(data, navigate);
+      await login(data, navigate);
     } catch (error) {
       console.error(error);
+      setError('root', {
+        message: (error as Error).message,
+      });
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(`/main/${user.id}/dashboard`, { replace: true });
+    }
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -77,6 +87,10 @@ export default function Login() {
               Forgot password?
             </Link>
           </div>
+
+          {errors.root && (
+            <span className="text-sm text-red-500 mt-1">{errors.root.message}</span>
+          )}
 
           <button
             disabled={isSubmitting}
