@@ -12,6 +12,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormFields>({
     resolver: zodResolver(registerFormSchema),
@@ -19,9 +20,12 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<RegisterFormFields> = async (data) => {
     try {
-      authRegister(data, navigate);
+      await authRegister(data, navigate);
     } catch (error) {
       console.error(error);
+      setError('root', {
+        message: (error as Error).message,
+      });
     }
   };
 
@@ -101,6 +105,10 @@ export default function Register() {
             <div className="w-full p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm text-center">
               {errors.root.message}
             </div>
+          )}
+
+          {errors.root && (
+            <span className="text-sm text-red-500 mt-1">{errors.root.message}</span>
           )}
 
           <button

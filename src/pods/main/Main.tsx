@@ -1,17 +1,23 @@
-import Header from "./components/Header";
-import Hero from "./sections/Hero";
+import { Outlet } from 'react-router-dom';
+import Sidenav from './components/Sidenav';
+import TopBar from './components/TopBar';
 
 export default function Main() {
   return (
-  <>
-      <main className="flex flex-col font-inter">
-        <div className="header w-full h-26 fixed top-0 z-10 flex items-center justify-center">
-          <Header />
+    <>
+      <section className="h-dvh flex items-center bg-zinc-900">
+        <div className="sidenav w-83">
+          <Sidenav />
         </div>
-        <section className="main-content flex flex-col min-h-dvh">
-          <Hero />
-        </section>
-      </main>
-  </>
-  )
+        <div className="outlet h-full w-full p-4 overflow-hidden">
+          <div className="top-bar">
+            <TopBar />
+          </div>
+          <div className="main-content h-full w-full">
+            <Outlet />
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }

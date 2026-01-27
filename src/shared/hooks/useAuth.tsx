@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { User } from '../models/user.model';
+import type { User } from '@/shared/models/user.model';
 import type { NavigateFunction } from 'react-router-dom';
+import { loginService, registerService, type LoginFields, type RegisterFields } from '@/shared/services/auth.services';
 
 interface AuthContextType {
   user: User | null;
@@ -19,55 +20,30 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = user !== null && token !== null;
 
-  const register = async (data: { name?: string; email: string; password: string }, navigate: NavigateFunction) => {
+  const register = async (data: RegisterFields, navigate: NavigateFunction) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Something went wrong:', errorData);
-        return;
-      }
-
-      const user = await response.json();
+      const user = await registerService(data);
+      if (!user) return;
       setUser(user);
       navigate('/auth/login', { replace: true });
-
-      console.log('USER REGISTERED:', user);
     } catch (error) {
-      console.error('Something went wrong:', (error as Error).message);
+      console.error('Register failed:', error);
+      throw error;
     }
   };
 
-  const login = async (data: { email: string, password: string }, navigate: NavigateFunction) => {
+  const login = async (data: LoginFields, navigate: NavigateFunction) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Something went wrong:', errorData);
+      const { token, user } = await loginService(data);
+      if (!token || !user) {
         return;
       }
-
-      const responseData = await response.json();
-
-      setToken(responseData.token);
-      setUser(responseData.user);
-      navigate('/', { replace: true });
+      setToken(token);
+      setUser(user);
+      navigate(`/main/${user.id}/dashboard`, { replace: true });
     } catch (error) {
-      console.error('Something went wrong:', (error as Error).message);
+      console.error('Login failed:', error);
+      throw error;
     }
   };
 

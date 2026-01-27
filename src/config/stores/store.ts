@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type CounterStore = {
   count: number;
@@ -15,4 +15,4 @@ export const useCounterStore = create<CounterStore>((set) => ({
     set((state) => ({ count: state.count + 1 }));
   },
   decrement: () => set((state) => ({ count: state.count - 1 })),
-}))
+}));
