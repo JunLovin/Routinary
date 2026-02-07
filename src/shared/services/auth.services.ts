@@ -45,5 +45,7 @@ export const loginService = async (data: LoginFields): Promise<LoginResponse> =>
     throw errorData;
   }
 
-  return await response.json();
+  const res = await response.json();
+
+  return res;
 };

@@ -7,9 +7,11 @@ import { SendHorizontal, Paperclip, Image as ImageIcon } from 'lucide-react';
 
 export default function Dashboard() {
   const { token } = useAuth();
+
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
