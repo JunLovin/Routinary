@@ -4,7 +4,7 @@ import Login from './pods/auth/login/Login';
 import Register from './pods/auth/register/Register';
 import Main from './pods/main/Main';
 import Landing from './pods/landing/Landing';
-import Dashboard from './pods/main/dashboard/Dashboard';
+import Chat from './pods/main/chat/Chat';
 
 const routes = [
   {
@@ -32,7 +32,13 @@ const routes = [
         path: '/main/:userId',
         element: <Main />,
         children: [
-          { path: 'dashboard', element: <Dashboard /> },
+          {
+            path: 'chat',
+            children: [
+              { path: 'new', element: <Chat /> },
+              { path: ':chatId', element: <Chat /> },
+            ],
+          },
         ],
       },
     ],

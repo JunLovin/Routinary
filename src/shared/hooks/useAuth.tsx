@@ -40,7 +40,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
       setToken(token);
       setUser(user);
-      navigate(`/main/${user.id}/dashboard`, { replace: true });
+      navigate(`/main/${user.id}/chat/new`, { replace: true });
     } catch (error) {
       console.error('Login failed:', error);
       throw error;

@@ -13,13 +13,13 @@ export default function Sidenav() {
 
   useEffect(() => {
     fetchRoutines(token!);
-  }, [user, token]);
+  }, [fetchRoutines, user, token]);
 
   useEffect(() => {
     if (!user) {
       logout(navigate);
     }
-  }, [navigate, user]);
+  }, [logout, navigate, user]);
 
   return (
     <>

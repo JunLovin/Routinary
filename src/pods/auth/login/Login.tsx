@@ -31,7 +31,7 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      navigate(`/main/${user.id}/dashboard`, { replace: true });
+      navigate(`/main/${user.id}/chat/new`, { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 

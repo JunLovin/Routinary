@@ -63,8 +63,9 @@ export const useRoutineStore = create<State & Action>()(
         });
 
         return routines;
-      } catch (error: any) {
-        set((state: State) => { state.error = error.message; state.isLoading = false; });
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
         console.error('Error fetching routines in routine store:', error);
         throw error;
       }
@@ -82,8 +83,9 @@ export const useRoutineStore = create<State & Action>()(
         });
 
         return routine;
-      } catch (error: any) {
-        set((state: State) => { state.error = error.message; state.isLoading = false; });
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
         console.error('Error creating routine in routine store:', error);
         throw error;
       }
