@@ -1,28 +1,33 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { Routine } from '../models/routine.model';
-import { createRoutineService, fetchRoutineService } from '../services/routine.services';
+import { createRoutineService, fetchRoutineByIdService, fetchRoutineService, type CreateRoutine } from '../services/routine.services';
 
 type State = {
   routines: Routine[];
+  currentRoutine: Routine | null;
+
   isLoading: boolean;
   error: string | null;
 }
 
-type Action = {
+type Actions = {
   addRoutine: (routine: Routine) => void;
   getRoutine: (id: string) => Routine | undefined;
+  setCurrentRoutine: (routine: Routine | null) => void;
   updateRoutine: (id: string, data: Partial<Routine>) => void;
   deleteRoutine: (id: string) => void;
 
   // INFO: Async Actions
   fetchRoutines: (token: string) => Promise<Routine[]>;
-  createRoutine: (prompt: string, token: string) => Promise<Routine>;
+  fetchRoutine: (id: string, token: string) => Promise<Routine>;
+  createRoutine: (data: CreateRoutine) => Promise<Routine>;
 }
 
-export const useRoutineStore = create<State & Action>()(
+export const useRoutineStore = create<State & Actions>()(
   immer((set, get) => ({
     routines: [],
+    currentRoutine: null,
     isLoading: false,
     error: null,
 
@@ -34,6 +39,12 @@ export const useRoutineStore = create<State & Action>()(
 
     getRoutine: (id) => {
       return get().routines.find((r) => r.id === id);
+    },
+
+    setCurrentRoutine: (routine) => {
+      set((state: State) => {
+        state.currentRoutine = routine;
+      });
     },
 
     updateRoutine: (id, data) => {
@@ -63,27 +74,54 @@ export const useRoutineStore = create<State & Action>()(
         });
 
         return routines;
-      } catch (error: any) {
-        set((state: State) => { state.error = error.message; state.isLoading = false; });
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
         console.error('Error fetching routines in routine store:', error);
         throw error;
       }
     },
 
-    createRoutine: async (prompt, token) => {
+    fetchRoutine: async (id, token) => {
       set((state: State) => { state.isLoading = true; state.error = null; });
 
       try {
-        const routine = await createRoutineService(prompt, token);
+        const routine = await fetchRoutineByIdService(id, token);
+
+        if (!routine) {
+          throw new Error('Routine not found');
+        }
 
         set((state: State) => {
-          state.routines.push(routine);
+          state.currentRoutine = routine;
           state.isLoading = false;
         });
 
         return routine;
-      } catch (error: any) {
-        set((state: State) => { state.error = error.message; state.isLoading = false; });
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
+        console.error('Error fetching routine by ID in routine store:', error);
+        throw error;
+      }
+    },
+
+    createRoutine: async (data) => {
+      set((state: State) => { state.isLoading = true; state.error = null; });
+
+      try {
+        const routine = await createRoutineService(data);
+
+        set((state: State) => {
+          state.currentRoutine = routine;
+          state.routines.unshift(routine);
+          state.isLoading = false;
+        });
+
+        return routine;
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
         console.error('Error creating routine in routine store:', error);
         throw error;
       }
