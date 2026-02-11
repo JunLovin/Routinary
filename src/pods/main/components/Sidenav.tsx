@@ -1,12 +1,19 @@
 import { useAuth } from '@/shared/hooks/useAuth';
+import { useRoutineStore } from '@/shared/stores/routine.store';
 import { toTitleCase } from '@/shared/utils/utils';
 import { ChevronUp, PanelRight, SquarePen } from 'lucide-react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Sidenav() {
+  const { user, logout, token } = useAuth();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+
+  const { fetchRoutines, routines } = useRoutineStore((state) => state);
+
+  useEffect(() => {
+    fetchRoutines(token!);
+  }, [user, token]);
 
   useEffect(() => {
     if (!user) {
@@ -30,9 +37,23 @@ export default function Sidenav() {
             </button>
           </div>
         </div>
-        <div className="chats flex flex-col gap-4 flex-1">
-          <span className="text-sm font-semibold select-none">Your chats</span>
-          <div className="chats-rows flex flex-col gap-2 items-center justify-center">
+        <span className="text-sm font-semibold select-none">Your chats</span>
+        <div className="chats flex flex-col gap-4 flex-1 overflow-y-auto">
+          <div className="chats-rows flex flex-col gap-4 items-center justify-center">
+            {!routines.length ? (
+              <h2 className="text-zinc-600 font-semibold text-lg">Start Your New Life!</h2>
+            ) : (
+              <>
+                {routines.map((r, i) => (
+                  <button
+                    key={i}
+                    className="w-full text-nowrap hover:bg-zinc-800 border border-zinc-400/20 rounded-lg p-2 cursor-pointer hover:text-orange-500 transition flex items-center justify-start gap-2"
+                  >
+                    {r.title.substring(0, 30) + '...'}
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         </div>
         <div className="user select-none border-t border-t-zinc-400/20 flex justify-center items-center w-full">

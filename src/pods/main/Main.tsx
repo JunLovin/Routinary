@@ -5,11 +5,11 @@ import TopBar from './components/TopBar';
 export default function Main() {
   return (
     <>
-      <section className="h-dvh flex items-center bg-zinc-900">
+      <section className="h-dvh flex items-center bg-zinc-900 overflow-hidden">
         <div className="sidenav w-83">
           <Sidenav />
         </div>
-        <div className="outlet h-full w-full p-4 overflow-hidden">
+        <div className="outlet h-full w-full p-4">
           <div className="top-bar">
             <TopBar />
           </div>

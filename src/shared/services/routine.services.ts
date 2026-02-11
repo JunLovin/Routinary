@@ -1,16 +1,31 @@
 import type { Routine } from '../models/routine.model';
 
-export interface GenerateRoutineResponse {
-  userId: string;
-  title: string;
-  description?: string;
-  prompt: string;
-  icsContent: Routine;
-}
-
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const createRoutineService = async (prompt: string, token: string): Promise<GenerateRoutineResponse> => {
+export const fetchRoutineService = async (token: string): Promise<Routine[]> => {
+  try {
+    const response = await fetch(`${API_URL}/api/routines/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Error fetching routines');
+    }
+
+    const data = await response.json();
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching routines:', error);
+    throw error;
+  }
+};
+
+export const createRoutineService = async (prompt: string, token: string): Promise<Routine> => {
   try {
     if (!API_URL) {
       console.warn('No API URL found in .env variables');
