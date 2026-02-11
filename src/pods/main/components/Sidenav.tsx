@@ -3,13 +3,17 @@ import { useRoutineStore } from '@/shared/stores/routine.store';
 import { toTitleCase } from '@/shared/utils/utils';
 import { ChevronUp, PanelRight, SquarePen } from 'lucide-react';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Sidenav() {
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
 
-  const { fetchRoutines, routines } = useRoutineStore((state) => state);
+  const currentRoutine = useRoutineStore((state) => state.currentRoutine);
+
+  const fetchRoutines = useRoutineStore((state) => state.fetchRoutines);
+  const routines = useRoutineStore((state) => state.routines);
+  const fetchRoutine = useRoutineStore((state) => state.fetchRoutine);
 
   useEffect(() => {
     fetchRoutines(token!);
@@ -21,6 +25,17 @@ export default function Sidenav() {
     }
   }, [logout, navigate, user]);
 
+  const goToRoutine = async (id: string) => {
+    try {
+      const routine = await fetchRoutine(id, token!);
+      if (routine) {
+        navigate(`/main/${user?.id}/chat/${routine.id}`);
+      }
+    } catch (error) {
+      console.error('Error fetching routine', error);
+    }
+  };
+
   return (
     <>
       <nav className="w-full h-dvh bg-zinc-950 p-4 text-zinc-400 flex flex-col gap-6">
@@ -31,10 +46,10 @@ export default function Sidenav() {
             </button>
           </div>
           <div className="new-chat-btn w-full">
-            <button className="w-full hover:bg-zinc-800 border border-zinc-400/20 rounded-lg p-2 cursor-pointer hover:text-orange-500 transition flex items-center justify-start gap-2">
+            <Link to={`/main/${user?.id}/chat/new`} className="w-full hover:bg-zinc-800 border border-zinc-400/20 rounded-lg p-2 cursor-pointer hover:text-orange-500 transition flex items-center justify-start gap-2">
               <SquarePen />
               New Chat
-            </button>
+            </Link>
           </div>
         </div>
         <span className="text-sm font-semibold select-none">Your chats</span>
@@ -47,7 +62,8 @@ export default function Sidenav() {
                 {routines.map((r, i) => (
                   <button
                     key={i}
-                    className="w-full text-nowrap hover:bg-zinc-800 border border-zinc-400/20 rounded-lg p-2 cursor-pointer hover:text-orange-500 transition flex items-center justify-start gap-2"
+                    onClick={() => goToRoutine(r.id)}
+                    className={`w-full text-nowrap hover:bg-zinc-800 border border-zinc-400/20 rounded-lg p-2 cursor-pointer hover:text-orange-500 transition flex items-center justify-start gap-2 ${currentRoutine?.id === r.id ? 'bg-zinc-800 text-orange-500' : ''}`}
                   >
                     {r.title.substring(0, 30) + '...'}
                   </button>

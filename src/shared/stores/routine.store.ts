@@ -1,15 +1,17 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { Routine } from '../models/routine.model';
-import { createRoutineService, fetchRoutineService } from '../services/routine.services';
+import { createRoutineService, fetchRoutineByIdService, fetchRoutineService, type CreateRoutine } from '../services/routine.services';
 
 type State = {
   routines: Routine[];
+  currentRoutine: Routine | null;
+
   isLoading: boolean;
   error: string | null;
 }
 
-type Action = {
+type Actions = {
   addRoutine: (routine: Routine) => void;
   getRoutine: (id: string) => Routine | undefined;
   updateRoutine: (id: string, data: Partial<Routine>) => void;
@@ -17,12 +19,14 @@ type Action = {
 
   // INFO: Async Actions
   fetchRoutines: (token: string) => Promise<Routine[]>;
-  createRoutine: (prompt: string, token: string) => Promise<Routine>;
+  fetchRoutine: (id: string, token: string) => Promise<Routine>;
+  createRoutine: (data: CreateRoutine) => Promise<Routine>;
 }
 
-export const useRoutineStore = create<State & Action>()(
+export const useRoutineStore = create<State & Actions>()(
   immer((set, get) => ({
     routines: [],
+    currentRoutine: null,
     isLoading: false,
     error: null,
 
@@ -71,13 +75,37 @@ export const useRoutineStore = create<State & Action>()(
       }
     },
 
-    createRoutine: async (prompt, token) => {
+    fetchRoutine: async (id, token) => {
       set((state: State) => { state.isLoading = true; state.error = null; });
 
       try {
-        const routine = await createRoutineService(prompt, token);
+        const routine = await fetchRoutineByIdService(id, token);
+
+        if (!routine) {
+          throw new Error('Routine not found');
+        }
 
         set((state: State) => {
+          state.currentRoutine = routine;
+          state.isLoading = false;
+        });
+
+        return routine;
+      } catch (error) {
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        set((state: State) => { state.error = err.message; state.isLoading = false; });
+        throw error;
+      }
+    },
+
+    createRoutine: async (data) => {
+      set((state: State) => { state.isLoading = true; state.error = null; });
+
+      try {
+        const routine = await createRoutineService(data);
+
+        set((state: State) => {
+          state.currentRoutine = routine;
           state.routines.push(routine);
           state.isLoading = false;
         });

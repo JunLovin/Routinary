@@ -46,6 +46,7 @@ export default function Login() {
         </div>
 
         <form
+          name="login-form"
           onSubmit={handleSubmit(onSubmit)}
           className="login-form flex w-md flex-col gap-5 items-center justify-center bg-white p-8 rounded-2xl shadow-sm border border-neutral-100"
         >

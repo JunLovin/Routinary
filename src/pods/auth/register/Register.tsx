@@ -40,6 +40,7 @@ export default function Register() {
         </div>
 
         <form
+          name="register-form"
           onSubmit={handleSubmit(onSubmit)}
           className="register-form flex w-md flex-col gap-5 items-center justify-center bg-white p-8 rounded-2xl shadow-sm border border-neutral-100"
         >
