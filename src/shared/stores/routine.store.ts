@@ -14,6 +14,7 @@ type State = {
 type Actions = {
   addRoutine: (routine: Routine) => void;
   getRoutine: (id: string) => Routine | undefined;
+  setCurrentRoutine: (routine: Routine | null) => void;
   updateRoutine: (id: string, data: Partial<Routine>) => void;
   deleteRoutine: (id: string) => void;
 
@@ -38,6 +39,12 @@ export const useRoutineStore = create<State & Actions>()(
 
     getRoutine: (id) => {
       return get().routines.find((r) => r.id === id);
+    },
+
+    setCurrentRoutine: (routine) => {
+      set((state: State) => {
+        state.currentRoutine = routine;
+      });
     },
 
     updateRoutine: (id, data) => {
@@ -106,7 +113,7 @@ export const useRoutineStore = create<State & Actions>()(
 
         set((state: State) => {
           state.currentRoutine = routine;
-          state.routines.push(routine);
+          state.routines.unshift(routine);
           state.isLoading = false;
         });
 

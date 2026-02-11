@@ -15,7 +15,6 @@ export default function Chat() {
   const messages = useChatStore((state) => state.messages);
 
   const addMessage = useChatStore((state) => state.addMessage);
-  const updateMessage = useChatStore((state) => state.updateMessage);
   const removeMessage = useChatStore((state) => state.removeMessage);
   const loadMessages = useChatStore((state) => state.loadMessages);
   const sendMessage = useChatStore((state) => state.sendMessage);
@@ -24,22 +23,31 @@ export default function Chat() {
   const createRoutine = useRoutineStore((state) => state.createRoutine);
 
   const [prompt, setPrompt] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const load = async () => {
+      try {
+        await loadMessages(chatId!, token!);
+      } catch (error) {
+        console.error('Error loading messages:', error);
+        throw error;
+      }
+    };
+
     if (!chatId) {
       clearMessages();
       return;
     };
     load();
-  }, [chatId]);
+  }, [chatId, clearMessages]);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.scrollTop =
-        textareaRef.current.scrollHeight;
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -50,15 +58,6 @@ export default function Chat() {
       textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
     }
   }, [prompt]);
-
-  const load = async () => {
-    try {
-      await loadMessages(chatId!, token!);
-    } catch (error) {
-      console.error('Error loading messages:', error);
-      throw error;
-    }
-  };
 
   const handleSendMessage = async () => {
     if (!prompt.trim()) return;
@@ -78,8 +77,6 @@ export default function Chat() {
     setPrompt('');
 
     try {
-      setIsLoading(true);
-
       let actualRoutineId = chatId;
 
       if (!chatId) {
@@ -91,23 +88,18 @@ export default function Chat() {
         navigate(`/main/${userId}/chat/${routine.id}`);
       }
 
-      const response = await sendMessage(
+      await sendMessage(
         actualRoutineId!,
         'USER',
         messageContent,
         token!,
         userId,
       );
-
-      updateMessage(tempId, response);
-
     } catch (error) {
       console.error('Error sending message:', error);
       removeMessage(tempId);
       setPrompt(messageContent);
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -119,13 +111,13 @@ export default function Chat() {
 
   return (
     <section className="h-full w-full flex flex-col items-center justify-between pb-8 pt-4">
-      <div className="messages-container w-full max-w-4xl flex flex-col gap-6 overflow-y-auto px-4 custom-scrollbar">
+      <div
+        ref={messagesContainerRef}
+        className="messages-container w-full max-w-4xl flex flex-col gap-6 overflow-y-auto px-4 custom-scrollbar"
+      >
         {messages.length > 0 ? (
           messages.map((m, i) => (
-            <div key={i} className="w-full">
-              <MessageComponent sender={m.sender} content={m.content} createdAt={m.createdAt} />
-              {isLoading && <MessageComponent loading={isLoading} />}
-            </div>
+            <MessageComponent key={i} sender={m.sender} content={m.content} createdAt={m.createdAt} />
           ))
         ) : (
           <div className="h-[60dvh] flex items-center justify-center">

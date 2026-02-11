@@ -14,7 +14,7 @@ type Actions = {
   addMessage: (message: Message) => void;
   updateMessage: (tempId: string, message: Message) => void;
   removeMessage: (messageId: string) => void;
-  setRoutineId: (id: string) => void;
+  setRoutineId: (id: string | null) => void;
   clearMessages: () => void;
 
   // INFO: Async Actions
