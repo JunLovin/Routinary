@@ -5,7 +5,7 @@ import { SendHorizontal, Paperclip, Image as ImageIcon } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useChatStore } from '@/shared/stores/chat.store';
 import { useRoutineStore } from '@/shared/stores/routine.store';
-import type Message from '@/shared/models/message.model';
+import type { Message } from '@/shared/models/message.model';
 
 export default function Chat() {
   const { userId, chatId } = useParams<{ userId: string; chatId?: string }>();
@@ -30,7 +30,11 @@ export default function Chat() {
   useEffect(() => {
     const load = async () => {
       try {
-        await loadMessages(chatId!, token!);
+        if (!chatId || !token) {
+          navigate('/auth/login', { replace: true });
+          return;
+        };
+        await loadMessages(chatId, token);
       } catch (error) {
         console.error('Error loading messages:', error);
         throw error;
@@ -42,7 +46,7 @@ export default function Chat() {
       return;
     };
     load();
-  }, [chatId, clearMessages]);
+  }, [chatId, clearMessages, loadMessages, navigate, token]);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -81,11 +85,10 @@ export default function Chat() {
 
       if (!chatId) {
         const routine = await createRoutine({
-          title: `New Routine ${Date.now().toString()}`,
+          title: `New Chat ${Date.now().toString()}`,
           token: token!,
         });
         actualRoutineId = routine.id;
-        navigate(`/main/${userId}/chat/${routine.id}`);
       }
 
       await sendMessage(
@@ -95,11 +98,12 @@ export default function Chat() {
         token!,
         userId,
       );
+      navigate(`/main/${userId}/chat/${actualRoutineId}`);
     } catch (error) {
       console.error('Error sending message:', error);
       removeMessage(tempId);
       setPrompt(messageContent);
-    } 
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -116,8 +120,8 @@ export default function Chat() {
         className="messages-container w-full max-w-4xl flex flex-col gap-6 overflow-y-auto px-4 custom-scrollbar"
       >
         {messages.length > 0 ? (
-          messages.map((m, i) => (
-            <MessageComponent key={i} sender={m.sender} content={m.content} createdAt={m.createdAt} />
+          messages.map((m) => (
+            <MessageComponent key={m.id} sender={m.sender} content={m.content} createdAt={m.createdAt} />
           ))
         ) : (
           <div className="h-[60dvh] flex items-center justify-center">
@@ -141,23 +145,30 @@ export default function Chat() {
           />
 
           <div className="absolute right-3 bottom-3 flex items-center gap-1">
-            <button className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors">
+            <button 
+              aria-label="Attach Image"
+              className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
+            >
               <ImageIcon size={20} />
             </button>
-            <button className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors">
+            <button
+              aria-label="Attach File"
+              className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
+            >
               <Paperclip size={20} />
             </button>
             <button
               onClick={handleSendMessage}
               disabled={!prompt.trim()}
               className="ml-1 cursor-pointer p-2.5 bg-zinc-100 text-zinc-950 rounded-full disabled:bg-zinc-800 disabled:text-zinc-600 transition-all active:scale-95"
+              aria-label="Send Message"  
             >
               <SendHorizontal size={18} strokeWidth={2.5} />
             </button>
           </div>
         </div>
         <p className="text-[10px] text-zinc-600 text-center mt-3">
-          AI could have errors, please review before do something.
+          AI could have errors, please review before doing something.
         </p>
       </div>
     </section>

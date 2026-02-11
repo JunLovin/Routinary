@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { fetchMessagesService, sendMessageService } from '../services/message.services';
-import type Message from '../models/message.model';
+import type { Message } from '../models/message.model';
 
 type State = {
   currentRoutineId: string | null;
@@ -64,6 +64,8 @@ export const useChatStore = create<State & Actions>()(
 
     loadMessages: async (routineId, token) => {
       try {
+        set((state: State) => { state.isLoading = true; state.error = null; });
+
         const messages = await fetchMessagesService(routineId, token);
 
         set((state: State) => {

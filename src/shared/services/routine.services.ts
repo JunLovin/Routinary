@@ -19,7 +19,7 @@ export const fetchRoutineService = async (token: string): Promise<Routine[]> => 
     });
 
     if (!response.ok) {
-      console.error('Error fetching routines');
+      throw new Error('Error fetching routines');
     }
 
     const data = await response.json();
@@ -42,7 +42,7 @@ export const fetchRoutineByIdService = async (id: string, token: string): Promis
     });
 
     if (!response.ok) {
-      console.error('Error fetching routine');
+      throw new Error('Error fetching routine');
     }
 
     const data = await response.json();
@@ -72,7 +72,7 @@ export const createRoutineService = async (data: CreateRoutine): Promise<Routine
     });
 
     if (!response.ok) {
-      console.error('Error generating create routine');
+      throw new Error('Error generating create routine');
     }
 
     const json = await response.json();

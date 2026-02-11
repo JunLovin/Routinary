@@ -101,6 +101,7 @@ export const useRoutineStore = create<State & Actions>()(
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Unknown error');
         set((state: State) => { state.error = err.message; state.isLoading = false; });
+        console.error('Error fetching routine by ID in routine store:', error);
         throw error;
       }
     },

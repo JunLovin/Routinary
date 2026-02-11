@@ -22,9 +22,7 @@ export const registerService = async (data: RegisterFields): Promise<User> => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Something went wrong:', errorData);
-    throw errorData;
+    throw new Error('Something went wrong:');
   }
 
   return await response.json();
@@ -40,9 +38,7 @@ export const loginService = async (data: LoginFields): Promise<LoginResponse> =>
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Something went wrong:', errorData);
-    throw errorData;
+    throw new Error('Something went wrong:');
   }
 
   const res = await response.json();

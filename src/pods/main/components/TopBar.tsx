@@ -6,7 +6,7 @@ export default function TopBar() {
   const pathname = location.pathname.split('/');
   const breadcrum = pathname[pathname.length - 1];
 
-  const { routines } = useRoutineStore((state) => state);
+  const routines = useRoutineStore((state) => state.routines);
 
   const generateTitle = () => {
     if (breadcrum === 'new') {
@@ -17,6 +17,8 @@ export default function TopBar() {
     if (routine) {
       return routine.title;
     }
+
+    return '';
   };
 
   return (

@@ -1,4 +1,4 @@
-import type Message from '@/shared/models/message.model';
+import type { Message } from '@/shared/models/message.model';
 
 type CreateMessage = {
   routineId: string;
@@ -21,7 +21,7 @@ export const fetchMessagesService = async (routineId: string, token: string): Pr
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch messages');;
+      throw new Error('Failed to fetch messages');
     }
     const data = await response.json();
     return data;
@@ -52,7 +52,7 @@ export const sendMessageService = async (data: CreateMessage): Promise<Message> 
     });
 
     if (!response.ok) {
-      console.error('Failed to send message');
+      throw new Error('Failed to send message');
     }
 
     const json = await response.json();

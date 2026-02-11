@@ -1,6 +1,6 @@
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
-import type Message from '../models/message.model';
+import type { Message } from '../models/message.model';
 import Markdown from 'react-markdown';
 
 export function Message(props: Partial<Message & { loading: boolean }>) {
@@ -10,12 +10,12 @@ export function Message(props: Partial<Message & { loading: boolean }>) {
   const copyToClipboard = async () => {
     if (props.loading) return;
     try {
-      navigator.clipboard.writeText(props.content!).catch((err) => console.error(err));
+      await navigator.clipboard.writeText(props.content!).catch((err) => console.error(err));
       setIsCopied(true);
 
       setTimeout(() => setIsCopied(false), 3000);
     } catch (error) {
-      console.error('Error copying in clipboard');
+      console.error('Error copying to clipboard');
       throw error;
     }
   };
@@ -40,6 +40,7 @@ export function Message(props: Partial<Message & { loading: boolean }>) {
             <button
               className="cursor-pointer p-2 rounded-full text-zinc-500 hover:bg-zinc-100 transition-colors shrink-0"
               onClick={copyToClipboard}
+              aria-label={!isCopied ? 'Copy message' : 'Message copied'}
             >
               {!isCopied ? <Copy /> : <Check />}
             </button>
@@ -60,6 +61,7 @@ export function Message(props: Partial<Message & { loading: boolean }>) {
             <button
               className="cursor-pointer p-2 rounded-full text-zinc-500 hover:bg-zinc-100 transition-colors shrink-0"
               onClick={copyToClipboard}
+              aria-label={!isCopied ? 'Copy message' : 'Message copied'}
             >
               {!isCopied ? <Copy /> : <Check />}
             </button>

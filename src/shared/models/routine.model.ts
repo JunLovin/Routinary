@@ -1,4 +1,4 @@
-import type Message from '@/shared/models/message.model';
+import type { Message } from '@/shared/models/message.model';
 
 export interface Routine {
   id: string;
