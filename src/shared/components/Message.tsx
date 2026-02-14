@@ -23,23 +23,28 @@ export function Message(props: Partial<Message>) {
       setTimeout(() => setIsCopied(false), 3000);
     } catch (error) {
       console.error('Error copying to clipboard:', error);
-      throw error;
     }
   };
 
   const handleDownloadICS = () => {
     if (!props.isICS || !props.content) return;
 
+    let url: string | null = null;
+
     try {
       const blob = new Blob([props.content], { type: 'text/calendar' });
-      const url = URL.createObjectURL(blob);
+      url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `routinary-calendar-${Date.now().toString()}.ics`;
       link.click();
+      link.remove();
     } catch (error) {
       console.error('Error downloading the ICS file:', error);
-      throw error;
+    } finally {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
     }
   };
 
@@ -82,7 +87,7 @@ export function Message(props: Partial<Message>) {
           <div
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setTimeout(() => setIsHover(false), 500)}
-            className={`bg-zinc-950 ${props.sender === 'AI' ? 'rounded-tl-none!' : 'rounded-tr-none!'} justify-start h-auto w-max overflow-x-auto max-w-md text-zinc-100 relative p-4 pb-12 flex rounded-2xl items-center`}
+            className={`bg-zinc-950 ${props.sender === 'AI' ? '!rounded-tl-none' : '!rounded-tr-none'} justify-start h-auto w-max overflow-x-auto max-w-md text-zinc-100 relative p-4 pb-12 flex rounded-2xl items-center`}
           >
             <span className="whitespace-pre-line w-full text-left"><Markdown>{formattedText}</Markdown></span>
             <div className="w-max absolute bottom-2 -right-4 -translate-x-1/2">
@@ -112,10 +117,10 @@ export function Message(props: Partial<Message>) {
               </div>
               <div className="flex flex-col overflow-hidden">
                 <span className="text-zinc-200 text-sm font-semibold truncate">
-            Calendar Event
+                  Calendar Event
                 </span>
                 <span className="text-zinc-500 text-xs uppercase tracking-wider">
-            .ics File
+                  .ics File
                 </span>
               </div>
             </div>
@@ -128,7 +133,7 @@ export function Message(props: Partial<Message>) {
                    justify-center gap-2 uppercase tracking-tight shadow-inner"
             >
               <Download className="w-4 h-4" />
-       Download Event 
+                Download Event
             </button>
           </div>
 

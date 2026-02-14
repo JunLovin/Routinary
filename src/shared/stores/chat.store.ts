@@ -95,7 +95,9 @@ export const useChatStore = create<State & Actions>()(
 
         let aiMessage = await sendMessageService({ routineId, sender, content, token, userId });
 
-        if (aiMessage.content.includes('BEGIN:VCALENDAR')) {
+        const icsRegex = /^[\s\S]*BEGIN:VCALENDAR[\s\S]*END:VCALENDAR[\s\S]*$/;
+
+        if (icsRegex.test(aiMessage.content)) {
           aiMessage = {
             ...aiMessage,
             isICS: true,

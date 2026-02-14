@@ -10,6 +10,7 @@ export default function Help() {
             <input
               type="text"
               placeholder="Search for help articles..."
+              aria-label="Search help articles"
               className="w-md px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 ring-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-700 transition-all"
             />
           </div>

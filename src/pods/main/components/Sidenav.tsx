@@ -198,21 +198,6 @@ export default function Sidenav() {
             <div className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-zinc-950"></div>
           </div>
 
-          <Dropdown.Content>
-            <Dropdown.Item
-              onClick={() => logout(navigate)}
-            >
-              Logout
-            </Dropdown.Item>
-            <Dropdown.Item 
-              className="w-full"
-              as={Link}
-              to={`/main/${user?.id}/settings`}
-            >
-            Settings
-            </Dropdown.Item>
-          </Dropdown.Content>
-
           {isOpen && (
             <div ref={(el) => {
               if (el && !isOpen) {
@@ -231,7 +216,22 @@ export default function Sidenav() {
           {isOpen && (
             <ChevronUp size={16} className="shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
           )}
+
         </Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item
+            onClick={() => logout(navigate)}
+          >
+              Logout
+          </Dropdown.Item>
+          <Dropdown.Item
+            className="w-full"
+            as={Link}
+            to={`/main/${user?.id}/settings`}
+          >
+              Settings
+          </Dropdown.Item>
+        </Dropdown.Content>
       </Dropdown>
     </nav>
   );
