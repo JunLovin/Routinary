@@ -56,6 +56,7 @@ export const sendMessageService = async (data: CreateMessage): Promise<Message> 
     }
 
     const json = await response.json();
+
     return json;
   } catch (error) {
     console.error('Error sending message:', error);

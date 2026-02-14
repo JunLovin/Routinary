@@ -1,11 +1,12 @@
 import { useAuth } from '@/shared/hooks/useAuth';
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import { Message as MessageComponent } from '@/shared/components/Message';
-import { SendHorizontal, Paperclip, Image as ImageIcon } from 'lucide-react';
+import { SendHorizontal, Paperclip, Image as ImageIcon, Mic } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useChatStore } from '@/shared/stores/chat.store';
 import { useRoutineStore } from '@/shared/stores/routine.store';
 import type { Message } from '@/shared/models/message.model';
+import MessageLoadingSpinner from '@/shared/components/MessageLoadingSpinner';
 
 export default function Chat() {
   const { userId, chatId } = useParams<{ userId: string; chatId?: string }>();
@@ -13,6 +14,7 @@ export default function Chat() {
   const navigate = useNavigate();
 
   const messages = useChatStore((state) => state.messages);
+  const isSending = useChatStore((state) => state.isSending);
 
   const addMessage = useChatStore((state) => state.addMessage);
   const removeMessage = useChatStore((state) => state.removeMessage);
@@ -89,6 +91,7 @@ export default function Chat() {
           token: token!,
         });
         actualRoutineId = routine.id;
+        navigate(`/main/${userId}/chat/${actualRoutineId}`);
       }
 
       await sendMessage(
@@ -98,7 +101,6 @@ export default function Chat() {
         token!,
         userId,
       );
-      navigate(`/main/${userId}/chat/${actualRoutineId}`);
     } catch (error) {
       console.error('Error sending message:', error);
       removeMessage(tempId);
@@ -113,6 +115,10 @@ export default function Chat() {
     }
   };
 
+  useEffect(() => {
+    setPrompt('');
+  }, [chatId]);
+
   return (
     <section className="h-full w-full flex flex-col items-center justify-between pb-8 pt-4">
       <div
@@ -121,19 +127,20 @@ export default function Chat() {
       >
         {messages.length > 0 ? (
           messages.map((m) => (
-            <MessageComponent key={m.id} sender={m.sender} content={m.content} createdAt={m.createdAt} />
+            <MessageComponent key={m.id} {...m} />
           ))
         ) : (
           <div className="h-[60dvh] flex items-center justify-center">
-            <h2 className="text-zinc-500 text-3xl font-medium text-center max-w-md">
+            <h2 className="text-zinc-500 text-4xl font-medium text-center w-xl">
               What routine are we architecting today?
             </h2>
           </div>
         )}
+        {isSending && <MessageLoadingSpinner />}
       </div>
 
       <div className="w-full max-w-4xl px-4 mt-4">
-        <div className="relative bg-zinc-900 rounded-3xl ring ring-zinc-800 p-2 focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
+        <div className="relative bg-zinc-950 rounded-3xl ring ring-zinc-800 p-2 focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
           <textarea
             ref={textareaRef}
             rows={1}
@@ -145,7 +152,7 @@ export default function Chat() {
           />
 
           <div className="absolute right-3 bottom-3 flex items-center gap-1">
-            <button 
+            <button
               aria-label="Attach Image"
               className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
             >
@@ -158,10 +165,16 @@ export default function Chat() {
               <Paperclip size={20} />
             </button>
             <button
+              aria-label="Send Audio"
+              className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
+            >
+              <Mic size={20} />
+            </button>
+            <button
               onClick={handleSendMessage}
               disabled={!prompt.trim()}
               className="ml-1 cursor-pointer p-2.5 bg-zinc-100 text-zinc-950 rounded-full disabled:bg-zinc-800 disabled:text-zinc-600 transition-all active:scale-95"
-              aria-label="Send Message"  
+              aria-label="Send Message"
             >
               <SendHorizontal size={18} strokeWidth={2.5} />
             </button>

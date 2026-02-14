@@ -5,6 +5,7 @@ import Register from './pods/auth/register/Register';
 import Main from './pods/main/Main';
 import Landing from './pods/landing/Landing';
 import Chat from './pods/main/chat/Chat';
+import Help from './pods/main/help/Help';
 
 const routes = [
   {
@@ -32,6 +33,7 @@ const routes = [
         path: '/main/:userId',
         element: <Main />,
         children: [
+          { path: 'help', element: <Help /> },
           {
             path: 'chat',
             children: [

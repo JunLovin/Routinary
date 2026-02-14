@@ -17,9 +17,12 @@ export default function Header() {
           <Link to="/">
             Formats
           </Link>
-          <Link to="https://github.com/JunLovin/Routinary" target="_blank">
+          <a 
+            href="https://github.com/JunLovin/Routinary" 
+            target="_blank"
+          >
             GitHub
-          </Link>
+          </a>
           <Link to="/">
             FAQ
           </Link>

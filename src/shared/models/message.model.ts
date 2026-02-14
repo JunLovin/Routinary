@@ -5,4 +5,5 @@ export interface Message {
   userId?: string;
   content: string;
   createdAt: Date;
+  isICS?: boolean;
 };

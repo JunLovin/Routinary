@@ -92,9 +92,15 @@ export const useRoutineStore = create<State & Actions>()(
           throw new Error('Routine not found');
         }
 
+        const routineIndex = get().routines.findIndex((r) => r.id === routine.id);
+
         set((state: State) => {
           state.currentRoutine = routine;
           state.isLoading = false;
+
+          if (routineIndex !== -1) {
+            state.routines[routineIndex] = routine;
+          }
         });
 
         return routine;
