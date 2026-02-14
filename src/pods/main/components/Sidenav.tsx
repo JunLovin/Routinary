@@ -1,24 +1,28 @@
 import { useAuth } from '@/shared/hooks/useAuth';
 import { useRoutineStore } from '@/shared/stores/routine.store';
 import { toTitleCase } from '@/shared/utils/utils';
-import { ChevronUp, PanelRight, SquarePen, MessageSquare } from 'lucide-react';
+import { ChevronUp, PanelRight, SquarePen, MessageSquare, CircleQuestionMark } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
+import Dropdown from '@/shared/components/ui/dropdown/Dropdown';
 
 export default function Sidenav() {
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
-
-  const sidenavRef = useRef<HTMLElement>(null);
-  const textContentRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const currentRoutine = useRoutineStore((state) => state.currentRoutine);
   const setCurrentRoutine = useRoutineStore((state) => state.setCurrentRoutine);
   const fetchRoutines = useRoutineStore((state) => state.fetchRoutines);
   const routines = useRoutineStore((state) => state.routines);
   const fetchRoutine = useRoutineStore((state) => state.fetchRoutine);
+
+  const [isOpen, setIsOpen] = useState(true);
+
+  const sidenavRef = useRef<HTMLElement>(null);
+  const textContentRef = useRef<HTMLDivElement>(null);
+  const pathname = location.pathname;
 
   useEffect(() => {
     if (!token) {
@@ -119,12 +123,21 @@ export default function Sidenav() {
 
         <button
           onClick={handleNewChat}
-          className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer hover:text-orange-500 hover:border-orange-500/30 ${!currentRoutine ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
+          className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer hover:text-orange-500 hover:border-orange-500/30 ${pathname.includes('new') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
           title="New Chat"
         >
           <SquarePen size={20} className="shrink-0" />
           {isOpen && <span className="text-sm font-medium whitespace-nowrap">New Chat</span>}
         </button>
+
+        <Link
+          to={`/main/${user?.id}/help`}
+          className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer ${pathname.includes('help') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
+          title="Help Center"
+        >
+          <CircleQuestionMark size={20} className="shrink-0" />
+          {isOpen && <span className="text-sm font-medium whitespace-nowrap">Help Center</span>}
+        </Link>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">
@@ -134,7 +147,7 @@ export default function Sidenav() {
               Your Chats
             </span>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden max-h-190">
               <div className="flex flex-col gap-1.5">
                 {routines.length === 0 ? (
                   <div className="flex items-center justify-center py-8">
@@ -167,8 +180,14 @@ export default function Sidenav() {
         </div>
       </div>
 
-      <div className="p-3 border-t border-zinc-800">
-        <div className={`flex items-center gap-3 hover:bg-zinc-800 rounded-lg transition-all p-2 cursor-pointer group relative ${isOpen ? '' : 'justify-center'}`}>
+      <Dropdown
+        className="p-3 border-t border-zinc-800"
+        verticalPosition="above"
+        matchTriggerWidth
+      >
+        <Dropdown.Trigger
+          className={`flex items-center w-full gap-3 hover:bg-zinc-800 rounded-lg transition-all p-2 cursor-pointer group relative ${isOpen ? '' : 'justify-center'}`}
+        >
           <div className="relative shrink-0">
             <div
               className="size-10 select-none rounded-full bg-linear-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-semibold text-sm"
@@ -178,6 +197,21 @@ export default function Sidenav() {
             </div>
             <div className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-zinc-950"></div>
           </div>
+
+          <Dropdown.Content>
+            <Dropdown.Item
+              onClick={() => logout(navigate)}
+            >
+              Logout
+            </Dropdown.Item>
+            <Dropdown.Item 
+              className="w-full"
+              as={Link}
+              to={`/main/${user?.id}/settings`}
+            >
+            Settings
+            </Dropdown.Item>
+          </Dropdown.Content>
 
           {isOpen && (
             <div ref={(el) => {
@@ -197,8 +231,8 @@ export default function Sidenav() {
           {isOpen && (
             <ChevronUp size={16} className="shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
           )}
-        </div>
-      </div>
+        </Dropdown.Trigger>
+      </Dropdown>
     </nav>
   );
 }

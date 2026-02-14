@@ -6,7 +6,7 @@ export default function Main() {
   return (
     <>
       <section className="h-dvh flex items-center bg-zinc-900 overflow-hidden">
-        <div className="sidenav w-83">
+        <div className="sidenav">
           <Sidenav />
         </div>
         <div className="outlet h-full w-full p-4">
