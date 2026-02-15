@@ -1,5 +1,6 @@
 import Background from '@/assets/background.avif';
-import { Outlet } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Link, Outlet } from 'react-router-dom';
 
 export default function Auth() {
   return (
@@ -11,6 +12,13 @@ export default function Auth() {
           style={{ backgroundImage: `url(${Background})` }}
           className="background h-full bg-fixed bg-contain bg-no-repeat max-lg:hidden"
         />
+        <Link
+          to="/"
+          className="absolute left-6 top-6 flex items-center gap-1 text-neutral-100 hover:text-white transition-colors font-medium"
+        >
+          <ArrowLeft size={24} />
+        Landing Page
+        </Link>
         <div className="outlet flex h-full flex-col justify-center items-center">
           <Outlet />
         </div>

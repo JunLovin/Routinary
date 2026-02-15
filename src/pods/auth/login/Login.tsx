@@ -37,7 +37,7 @@ export default function Login() {
 
   return (
     <>
-      <section className="login min-h-screen flex items-center justify-center flex-col gap-6 bg-neutral-50/50">
+      <section className="login min-h-dvh flex items-center justify-center flex-col gap-6 bg-neutral-50/50">
         <div className="flex flex-col items-center gap-2">
           <h1 className="login-title text-4xl font-bold bg-linear-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent leading-normal">
             Welcome Back
