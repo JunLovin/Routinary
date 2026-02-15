@@ -6,6 +6,8 @@ import Main from './pods/main/Main';
 import Landing from './pods/landing/Landing';
 import Chat from './pods/main/chat/Chat';
 import Help from './pods/main/help/Help';
+import Categories from './pods/main/help/components/Categories';
+import Article from './pods/main/help/components/articles/Article';
 
 const routes = [
   {
@@ -33,7 +35,24 @@ const routes = [
         path: '/main/:userId',
         element: <Main />,
         children: [
-          { path: 'help', element: <Help /> },
+          {
+            path: 'help',
+            element: <Help />,
+            children: [
+              {
+                path: '',
+                element: <Categories />,
+              },
+              {
+                path: ':categoryId',
+                element: <Categories />,
+              },
+            ],
+          },
+          {
+            path: 'article/:articleId',
+            element: <Article />,
+          },
           {
             path: 'chat',
             children: [
