@@ -2,7 +2,7 @@ import { useAuth } from '@/shared/hooks/useAuth';
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import { Message as MessageComponent } from '@/shared/components/Message';
 import { SendHorizontal, Paperclip, Image as ImageIcon, Mic } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useChatStore } from '@/shared/stores/chat.store';
 import { useRoutineStore } from '@/shared/stores/routine.store';
 import type { Message } from '@/shared/models/message.model';
@@ -12,6 +12,9 @@ export default function Chat() {
   const { userId, chatId } = useParams<{ userId: string; chatId?: string }>();
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const initialMessage = location.state?.initialMessage || '';
 
   const messages = useChatStore((state) => state.messages);
   const isSending = useChatStore((state) => state.isSending);
@@ -24,10 +27,18 @@ export default function Chat() {
 
   const createRoutine = useRoutineStore((state) => state.createRoutine);
 
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState(initialMessage);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const hasSentInitialMessage = useRef(false);
+
+  useEffect(() => {
+    if (initialMessage && !hasSentInitialMessage.current) {
+      hasSentInitialMessage.current = true;
+      handleSendMessage(initialMessage);
+    }
+  }, [initialMessage]);
 
   useEffect(() => {
     const load = async () => {
@@ -65,8 +76,8 @@ export default function Chat() {
     }
   }, [prompt]);
 
-  const handleSendMessage = async () => {
-    if (!prompt.trim()) return;
+  const handleSendMessage = async (message?: string) => {
+    if (!(message || prompt).trim()) return;
 
     const tempId = `temp-${Date.now()}`;
     const messageContent = prompt;
@@ -74,7 +85,7 @@ export default function Chat() {
     const optimisticMessage: Message = {
       id: tempId,
       routineId: chatId || 'temp',
-      content: messageContent,
+      content: message ? message : messageContent,
       sender: 'USER',
       createdAt: new Date(),
     };
@@ -97,7 +108,7 @@ export default function Chat() {
       await sendMessage(
         actualRoutineId!,
         'USER',
-        messageContent,
+        message ? message : messageContent,
         token!,
         userId,
       );
@@ -131,7 +142,7 @@ export default function Chat() {
           ))
         ) : (
           <div className="h-[60dvh] flex items-center justify-center">
-            <h2 className="text-zinc-500 text-4xl font-medium text-center w-xl">
+            <h2 className="text-zinc-500 text-4xl font-medium text-center w-xl select-none">
               What routine are we architecting today?
             </h2>
           </div>
@@ -171,7 +182,7 @@ export default function Chat() {
               <Mic size={20} />
             </button>
             <button
-              onClick={handleSendMessage}
+              onClick={() => handleSendMessage()}
               disabled={!prompt.trim()}
               className="ml-1 cursor-pointer p-2.5 bg-zinc-100 text-zinc-950 rounded-full disabled:bg-zinc-800 disabled:text-zinc-600 transition-all active:scale-95"
               aria-label="Send Message"

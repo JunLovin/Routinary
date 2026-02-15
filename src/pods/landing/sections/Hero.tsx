@@ -1,16 +1,23 @@
 import Background from '@/assets/background.avif';
-import { ArrowRight, AudioLines, Mic, Plus, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, Mic, Plus, SendHorizontal, SlidersHorizontal } from 'lucide-react';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
-import { useEffect } from 'react';
+import { useEffect, useState, type KeyboardEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/shared/hooks/useAuth';
+
+const avatars = [
+  'https://i.pravatar.cc/150?img=59',
+  'https://i.pravatar.cc/150?img=53',
+  'https://i.pravatar.cc/150?img=57',
+  'https://i.pravatar.cc/150?img=64',
+];
 
 export default function Hero() {
-  const avatars = [
-    'https://i.pravatar.cc/150?img=59',
-    'https://i.pravatar.cc/150?img=53',
-    'https://i.pravatar.cc/150?img=57',
-    'https://i.pravatar.cc/150?img=64',
-  ];
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     gsap.registerPlugin(SplitText);
@@ -48,6 +55,25 @@ export default function Hero() {
     };
   }, []);
 
+  const handleSendMessage = () => {
+    if (!message.trim()) return;
+
+    const messageToSend = message.trim();
+    setMessage('');
+    if (isAuthenticated && user) {
+      navigate(`/main/${user.id}/chat/new`, { state: { initialMessage: messageToSend } });
+      return;
+    }
+    navigate('/auth/login', { state: { initialMessage: messageToSend } });
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <>
       <div
@@ -75,6 +101,9 @@ export default function Hero() {
             <textarea
               className="w-full resize-none min-h-14 overflow-y-auto outline-0 text-base"
               placeholder="Describe your ideal day... (e.g. Wake up at 6am, workout, deep work for 4 hours, and dinner at 8pm)"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <span className="flex-1"/>
             <div className="buttons w-full pb-2 h-full flex justify-between items-end text-white/80">
@@ -87,19 +116,26 @@ export default function Hero() {
               </div>
               <div className="right-icons flex items-center gap-4">
                 <Mic />
-                <div className="real-time-ai bg-white/30 text-white/50 rounded-full p-1.5">
-                  <AudioLines size={24} />
-                </div>
+                <button
+                  className="real-time-ai disabled:bg-white/30 disabled:text-white/50 cursor-pointer bg-zinc-100 text-zinc-950 rounded-full p-1.5"
+                  disabled={!message.trim()}
+                  onClick={handleSendMessage}
+                  aria-label="Send message"
+                >
+                  <SendHorizontal size={24} />
+                </button>
               </div>
             </div>
           </div>
           <div className="flex items-center justify-center gap-6 w-full relative">
-            <button className="rounded-lg text-lg h-12 relative font-medium pl-6 pr-1 cursor-pointer bg-linear-to-r from-orange-400 to-orange-600 text-white flex gap-4 items-center">
+            <Link
+              to="/auth/login"
+              className="rounded-lg text-lg h-12 relative font-medium pl-6 pr-1 cursor-pointer bg-linear-to-r from-orange-400 to-orange-600 text-white flex gap-4 items-center">
               Create Routine
               <div className="next-icon w-max h-max rounded-md bg-white p-1.5 text-orange-400">
                 <ArrowRight />
               </div>
-            </button>
+            </Link>
             <div className="group-avatars flex flex-row items-center relative max-lg:hidden">
               {avatars.map((avatar, i) => (
                 <div key={i} className="avatar size-12 -mr-4">

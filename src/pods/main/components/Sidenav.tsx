@@ -224,12 +224,19 @@ export default function Sidenav() {
           >
               Logout
           </Dropdown.Item>
-          <Dropdown.Item
+         <Dropdown.Item
             className="w-full"
             as={Link}
             to={`/main/${user?.id}/settings`}
           >
               Settings
+          </Dropdown.Item>
+          <Dropdown.Item
+            className="w-full"
+            as={Link}
+            to="/"
+          >
+              Landing
           </Dropdown.Item>
         </Dropdown.Content>
       </Dropdown>
