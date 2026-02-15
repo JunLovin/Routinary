@@ -1,8 +1,8 @@
 import Background from '@/assets/background.avif';
-import { ArrowRight, Mic, Plus, SendHorizonal, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, Mic, Plus, SendHorizontal, SlidersHorizontal } from 'lucide-react';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type KeyboardEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/hooks/useAuth';
 
@@ -61,10 +61,17 @@ export default function Hero() {
     const messageToSend = message.trim();
     setMessage('');
     if (isAuthenticated && user) {
-      navigate(`/main/${user.id}/chat/new?message=${encodeURIComponent(messageToSend)}`, { state: { initialMessage: messageToSend } });
+      navigate(`/main/${user.id}/chat/new`, { state: { initialMessage: messageToSend } });
       return;
     }
-    navigate('/auth/login');
+    navigate('/auth/login', { state: { initialMessage: messageToSend } });
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
@@ -96,6 +103,7 @@ export default function Hero() {
               placeholder="Describe your ideal day... (e.g. Wake up at 6am, workout, deep work for 4 hours, and dinner at 8pm)"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <span className="flex-1"/>
             <div className="buttons w-full pb-2 h-full flex justify-between items-end text-white/80">
@@ -112,8 +120,9 @@ export default function Hero() {
                   className="real-time-ai disabled:bg-white/30 disabled:text-white/50 cursor-pointer bg-zinc-100 text-zinc-950 rounded-full p-1.5"
                   disabled={!message.trim()}
                   onClick={handleSendMessage}
+                  aria-label="Send message"
                 >
-                  <SendHorizonal size={24} />
+                  <SendHorizontal size={24} />
                 </button>
               </div>
             </div>

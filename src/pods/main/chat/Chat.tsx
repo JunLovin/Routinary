@@ -38,7 +38,7 @@ export default function Chat() {
       hasSentInitialMessage.current = true;
       handleSendMessage(initialMessage);
     }
-  }, [location.state]);
+  }, [initialMessage]);
 
   useEffect(() => {
     const load = async () => {
@@ -77,7 +77,7 @@ export default function Chat() {
   }, [prompt]);
 
   const handleSendMessage = async (message?: string) => {
-    if (!prompt.trim()) return;
+    if (!(message || prompt).trim()) return;
 
     const tempId = `temp-${Date.now()}`;
     const messageContent = prompt;
@@ -182,7 +182,7 @@ export default function Chat() {
               <Mic size={20} />
             </button>
             <button
-              onClick={handleSendMessage}
+              onClick={() => handleSendMessage()}
               disabled={!prompt.trim()}
               className="ml-1 cursor-pointer p-2.5 bg-zinc-100 text-zinc-950 rounded-full disabled:bg-zinc-800 disabled:text-zinc-600 transition-all active:scale-95"
               aria-label="Send Message"
