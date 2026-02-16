@@ -1,4 +1,4 @@
-import Background from '@/assets/background.avif';
+import Background from '@/assets/images/background.avif';
 import { ArrowLeft } from 'lucide-react';
 import { Link, Outlet } from 'react-router-dom';
 

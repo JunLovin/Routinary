@@ -5,7 +5,7 @@ import TopBar from './components/TopBar';
 export default function Main() {
   return (
     <>
-      <section className="h-dvh flex items-center bg-zinc-900 overflow-hidden">
+      <section className="h-dvh flex items-center bg-zinc-900 overflow-hidden font-inter">
         <div className="sidenav">
           <Sidenav />
         </div>
@@ -13,7 +13,7 @@ export default function Main() {
           <div className="top-bar">
             <TopBar />
           </div>
-          <div className="main-content h-full w-full">
+          <div className="main-content h-full w-full overflow-y-hidden">
             <Outlet />
           </div>
         </div>

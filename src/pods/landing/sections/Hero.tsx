@@ -1,4 +1,4 @@
-import Background from '@/assets/background.avif';
+import Background from '@/assets/images/background.avif';
 import { ArrowRight, Mic, Plus, SendHorizontal, SlidersHorizontal } from 'lucide-react';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';

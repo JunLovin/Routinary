@@ -1,4 +1,4 @@
-import GoogleIcon from '@/assets/GoogleIcon';
+import GoogleIcon from '@/assets/icons/GoogleIcon';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginFormSchema, type LoginFormFields } from './schema/login.schema';
 import { useForm, type SubmitHandler } from 'react-hook-form';
