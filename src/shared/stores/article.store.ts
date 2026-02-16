@@ -77,7 +77,7 @@ export const useArticleStore = create<State & Actions>()(
     setFilteredCategories: (searchTerm) => {
       set((state) => {
         if (!searchTerm.trim()) {
-          state.filteredCategories = categories;
+          state.filteredCategories = state.categories;
           return;
         }
 

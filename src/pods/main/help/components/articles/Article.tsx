@@ -22,7 +22,7 @@ export default function Article() {
         navigate(`/main/${user?.id}/help`);
       }
     }
-  }, [articleId, getArticle, setCurrentArticle, navigate]);
+  }, [articleId, getArticle, setCurrentArticle, navigate, user?.id]);
 
   if (!currentArticle) {
     return (
@@ -42,12 +42,12 @@ export default function Article() {
   });
 
   return (
-    <div className="h-dvh bg-linear-to-b from-zinc-900 to-zinc-950 text-zinc-100 overflow-y-auto">
+    <div className="h-dvh bg-gradient-to-b from-zinc-900 to-zinc-950 text-zinc-100 overflow-y-auto">
       <div className="sticky top-0 z-10 bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <button
             onClick={() => navigate(`/main/${user?.id}/help`)}
-            className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="flex cursor-pointer items-center gap-2 text-zinc-400 hover:text-zinc-100 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Help Center</span>

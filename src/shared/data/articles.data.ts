@@ -4,7 +4,7 @@ import ICSToOutlookCalendar from '@/assets/images/icsToOutlook.webp';
 
 export const articles: Article[] = [
   {
-    id: crypto.randomUUID(),
+    id: 'how-to-import-ics-files-into-google-calendar',
     title: 'How To Import ICS Files Into Google Calendar',
     description: 'Learn how to easily import ICS files into your Google Calendar and stay organized with your schedule.',
     content: `
@@ -48,7 +48,7 @@ export const articles: Article[] = [
     updatedAt: new Date(),
   },
   {
-    id: crypto.randomUUID(),
+    id: 'how-to-import-ics-files-into-outlook-calendar',
     title: 'How To Import ICS Files Into Outlook Calendar',
     description: 'Learn how to easily import ICS files into your Outlook Calendar and stay organized with your schedule.',
     content: `
@@ -100,21 +100,21 @@ export const articles: Article[] = [
 
 export const categories: Category[] = [
   {
-    id: crypto.randomUUID(),
+    id: 'how-to',
     type: 'How To',
     articles: articles.filter((a) => a.category === 'How To'),
     description: 'Step-by-step guides to help you accomplish specific tasks and learn new skills.',
     order: 1,
   },
   {
-    id: crypto.randomUUID(),
+    id: 'troubleshooting',
     type: 'Troubleshooting',
     articles: [],
     description: 'Solutions to common problems and issues you may encounter while using our product.',
     order: 2,
   },
   {
-    id: crypto.randomUUID(),
+    id: 'best-practices',
     type: 'Best Practices',
     articles: [],
     description: 'Tips and recommendations to help you get the most out of our product and improve your workflow.',

@@ -1,11 +1,12 @@
 import { useAuth } from '@/shared/hooks/useAuth';
 import type { Article, Category } from '@/shared/models/article.model';
 import { useArticleStore } from '@/shared/stores/article.store';
-import { useEffect, useState, type ChangeEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 
 export default function Categories() {
   const { categoryId } = useParams<{ categoryId?: string }>();
+  const { search } = useOutletContext<{ search: string; }>();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -17,9 +18,6 @@ export default function Categories() {
   const setCurrentArticle = useArticleStore((state) => state.setCurrentArticle);
   const getCategory = useArticleStore((state) => state.getCategory);
 
-  // TODO: Implement search functionality for categories
-  const [search, setSearch] = useState('');
-
   useEffect(() => {
     if (!currentCategory && categoryId) {
       const category = getCategory(categoryId);
@@ -27,17 +25,16 @@ export default function Categories() {
         setCurrentCategory(category);
       }
     }
-  }, [categoryId]);
+  }, [categoryId, currentCategory, getCategory, setCurrentCategory, navigate, user]);
 
-  // TODO: Implement search functionality for categories
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setSearch(e.target.value);
-    setFilteredCategories(e.target.value.trim());
-  };
+  useEffect(() => {
+    setFilteredCategories(search.trim());
+  }, [search, setFilteredCategories]);
 
   const handleClickCategory = (category: Category) => {
     if (!user || !isAuthenticated) {
       navigate('/auth/login', { replace: true });
+      return;
     }
 
     setCurrentCategory(category);
@@ -47,6 +44,7 @@ export default function Categories() {
   const handleClickArticle = (article: Article) => {
     if (!user || !isAuthenticated) {
       navigate('/auth/login', { replace: true });
+      return;
     }
 
     setCurrentArticle(article);
