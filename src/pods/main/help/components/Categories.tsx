@@ -17,6 +17,7 @@ export default function Categories() {
   const setCurrentArticle = useArticleStore((state) => state.setCurrentArticle);
   const getCategory = useArticleStore((state) => state.getCategory);
 
+  // TODO: Implement search functionality for categories
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function Categories() {
     }
   }, [categoryId]);
 
+  // TODO: Implement search functionality for categories
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setSearch(e.target.value);
     setFilteredCategories(e.target.value.trim());
@@ -54,7 +56,7 @@ export default function Categories() {
   if (categoryId) {
     return (
       <>
-        <h2 className="text-2xl font-medium">Articles of "{currentCategory?.type}"</h2>
+        <h2 className="text-2xl font-medium">Articles of <strong>{currentCategory?.type}</strong></h2>
         <div className="categories grid grid-cols-3 gap-6 w-full">
           {currentCategory?.articles.map((article) => (
             <button
