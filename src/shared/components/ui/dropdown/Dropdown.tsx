@@ -57,7 +57,7 @@ export default function Dropdown({
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(initiallyOpened);
   const [contentStyles, setContentStyles] = useState<React.CSSProperties>({});
-  
+
   const triggerRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<any>(null);
@@ -77,9 +77,9 @@ export default function Dropdown({
     let left: number | undefined;
     let right: number | undefined;
 
-    if (verticalPosition === "above") {
+    if (verticalPosition === 'above') {
       top = triggerRect.top - contentRect.height;
-    } else if (verticalPosition === "below") {
+    } else if (verticalPosition === 'below') {
       top = triggerRect.bottom;
     } else {
       const spaceBelow = viewport.height - triggerRect.bottom;
@@ -92,9 +92,9 @@ export default function Dropdown({
       }
     }
 
-    if (horizontalPosition === "left") {
+    if (horizontalPosition === 'left') {
       left = triggerRect.left;
-    } else if (horizontalPosition === "right") {
+    } else if (horizontalPosition === 'right') {
       right = viewport.width - triggerRect.right;
     } else {
       const spaceRight = viewport.width - triggerRect.left;
@@ -107,11 +107,11 @@ export default function Dropdown({
       }
     }
 
-    const newStyles: React.CSSProperties = { 
-      top, 
-      left, 
+    const newStyles: React.CSSProperties = {
+      top,
+      left,
       right,
-      ...(matchTriggerWidth ? { width: `${triggerRect.width}px` } : {})
+      ...(matchTriggerWidth ? { width: `${triggerRect.width}px` } : {}),
     };
 
     setContentStyles(newStyles);
@@ -163,8 +163,8 @@ export default function Dropdown({
       close();
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, close]);
 
   useEffect(() => {
@@ -223,11 +223,11 @@ export default function Dropdown({
     toggle,
     open,
     closeLater,
-    disabled
+    disabled,
   };
 
   const renderChildren = () => {
-    if (typeof children === "function") {
+    if (typeof children === 'function') {
       return children({
         trigger: Trigger,
         content: Content,
