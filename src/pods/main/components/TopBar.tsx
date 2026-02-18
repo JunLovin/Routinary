@@ -62,15 +62,25 @@ export default function TopBar() {
   }, []);
 
   const generateTitle = () => {
-    if (breadcrum === 'new') {
-      return 'New Chat';
+    switch (breadcrum) {
+      case 'new':
+        return 'New Chat';
+      case 'help':
+        return 'Help Center';
+      case 'settings':
+        return 'Settings';
+      case 'account':
+        return 'Account Settings';
+      case 'appearance':
+        return 'Appearance Settings';
+      case 'security':
+        return 'Security Settings';
+      default:
+        if (currentRoutine) {
+          return currentRoutine.title;
+        }
+        break;
     }
-
-    if (currentRoutine) {
-      return currentRoutine.title;
-    }
-
-    return '';
   };
 
   return (

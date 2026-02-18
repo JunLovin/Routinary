@@ -87,11 +87,11 @@ export function Message(props: Partial<Message>) {
           <div
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setTimeout(() => setIsHover(false), 500)}
-            className={`bg-zinc-950 ${props.sender === 'AI' ? '!rounded-tl-none !w-xl' : '!rounded-tr-none w-max max-w-md'} justify-start h-auto overflow-x-auto text-zinc-100 relative p-4 pb-12 flex rounded-2xl items-center`}
+            className={`bg-zinc-950 ${props.sender === 'AI' ? '!rounded-tl-none !w-xl' : '!rounded-tr-none w-max max-w-md'} justify-start h-auto overflow-x-auto text-zinc-100 relative p-4 pb-12 flex rounded-2xl items-center min-w-[80px]`}
           >
             <span className="whitespace-pre-line w-full text-left"><Markdown>{formattedText}</Markdown></span>
-            <div className="w-max absolute bottom-2 -right-4 -translate-x-1/2">
-              <span className="text-zinc-600">{formatDate(props.createdAt)}</span>
+            <div className="w-max absolute bottom-2 right-0 -translate-x-1/2">
+              <span className="text-zinc-600 text-sm font-medium">{formatDate(props.createdAt)}</span>
             </div>
           </div>
 

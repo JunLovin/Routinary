@@ -6,16 +6,19 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import Dropdown from '@/shared/components/ui/dropdown/Dropdown';
+import { useChatStore } from '@/shared/stores/chat.store';
 
 export default function Sidenav() {
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isSending = useChatStore((state) => state.isSending);
   const currentRoutine = useRoutineStore((state) => state.currentRoutine);
+  const routines = useRoutineStore((state) => state.routines);
+
   const setCurrentRoutine = useRoutineStore((state) => state.setCurrentRoutine);
   const fetchRoutines = useRoutineStore((state) => state.fetchRoutines);
-  const routines = useRoutineStore((state) => state.routines);
   const fetchRoutine = useRoutineStore((state) => state.fetchRoutine);
 
   const [isOpen, setIsOpen] = useState(true);
@@ -125,6 +128,7 @@ export default function Sidenav() {
           onClick={handleNewChat}
           className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer hover:text-orange-500 hover:border-orange-500/30 ${pathname.includes('new') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
           title="New Chat"
+          disabled={isSending}
         >
           <SquarePen size={20} className="shrink-0" />
           {isOpen && <span className="text-sm font-medium whitespace-nowrap">New Chat</span>}
@@ -134,6 +138,11 @@ export default function Sidenav() {
           to={`/main/${user?.id}/help`}
           className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer ${pathname.includes('help') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
           title="Help Center"
+          onClick={(e) => {
+            if (isSending) {
+              e.preventDefault();
+            }
+          }}
         >
           <CircleQuestionMark size={20} className="shrink-0" />
           {isOpen && <span className="text-sm font-medium whitespace-nowrap">Help Center</span>}
@@ -147,7 +156,7 @@ export default function Sidenav() {
               Your Chats
             </span>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden max-h-190">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden max-h-190 pb-2">
               <div className="flex flex-col gap-1.5">
                 {routines.length === 0 ? (
                   <div className="flex items-center justify-center py-8">
@@ -166,6 +175,7 @@ export default function Sidenav() {
                           : 'text-zinc-400'
                       }`}
                       title={!isOpen ? '' : routine.title}
+                      disabled={isSending}
                     >
                       <MessageSquare size={18} className="shrink-0" />
                       <span className="text-sm truncate flex-1">
@@ -184,6 +194,7 @@ export default function Sidenav() {
         className="p-3 border-t border-zinc-800"
         verticalPosition="above"
         matchTriggerWidth
+        disabled={isSending}
       >
         <Dropdown.Trigger
           className={`flex items-center w-full gap-3 hover:bg-zinc-800 rounded-lg transition-all p-2 cursor-pointer group relative ${isOpen ? '' : 'justify-center'}`}
@@ -220,13 +231,17 @@ export default function Sidenav() {
         </Dropdown.Trigger>
         <Dropdown.Content>
           <Dropdown.Item
-            onClick={() => logout(navigate)}
+            onClick={() => {
+              logout(navigate);
+              setCurrentRoutine(null);
+            }}
           >
               Logout
           </Dropdown.Item>
           <Dropdown.Item
             className="w-full"
             as={Link}
+            onClick={() => setCurrentRoutine(null)}
             to={`/main/${user?.id}/settings`}
           >
               Settings
