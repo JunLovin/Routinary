@@ -136,13 +136,15 @@ export default function Sidenav() {
 
         <Link
           to={`/main/${user?.id}/help`}
-          className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer ${pathname.includes('help') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3`}
+          className={`w-full hover:bg-zinc-800 border border-zinc-700/50 rounded-lg p-2.5 cursor-pointer ${pathname.includes('help') ? 'bg-zinc-800 text-orange-500 border-orange-500/30' : ''} hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-3 ${isSending ? 'pointer-events-none' : ''} `}
           title="Help Center"
           onClick={(e) => {
             if (isSending) {
               e.preventDefault();
             }
           }}
+          aria-disabled={isSending}
+          tabIndex={isSending ? -1 : 0}
         >
           <CircleQuestionMark size={20} className="shrink-0" />
           {isOpen && <span className="text-sm font-medium whitespace-nowrap">Help Center</span>}
@@ -169,11 +171,11 @@ export default function Sidenav() {
                     <button
                       key={routine.id}
                       onClick={() => goToRoutine(routine.id)}
-                      className={`w-full ${!isOpen ? 'cursor-default!' : ''} text-left hover:bg-zinc-800 rounded-lg p-2.5 cursor-pointer hover:text-orange-500 transition-all flex items-center gap-3 group ${
+                      className={`w-full ${!isOpen ? 'cursor-default!' : ''} select-none text-left hover:bg-zinc-800 rounded-lg p-2.5 cursor-pointer hover:text-orange-500 transition-all flex items-center gap-3 group ${
                         currentRoutine?.id === routine.id
                           ? 'bg-zinc-800 text-orange-500'
                           : 'text-zinc-400'
-                      }`}
+                      } ${isSending ? 'pointer-events-none' : ''}`}
                       title={!isOpen ? '' : routine.title}
                       disabled={isSending}
                     >
@@ -242,7 +244,7 @@ export default function Sidenav() {
             className="w-full"
             as={Link}
             onClick={() => setCurrentRoutine(null)}
-            to={`/main/${user?.id}/settings`}
+            to={`/main/${user?.id}/settings/account`}
           >
               Settings
           </Dropdown.Item>

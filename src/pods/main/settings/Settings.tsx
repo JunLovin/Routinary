@@ -20,7 +20,7 @@ export default function Settings() {
     if (!user) {
       navigate('/auth/login', { replace: true });
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const settingsOptions: SettingOption[] = [
     {
@@ -33,7 +33,7 @@ export default function Settings() {
       active: true,
     },
     {
-      label: 'Appareance',
+      label: 'Appearance',
       description: 'Customize the look and feel of the application.',
       icon: <PaletteIcon />,
       action: () => {
@@ -59,9 +59,16 @@ export default function Settings() {
           {settingsOptions.map((o) => (
             <div
               key={o.label}
+              role="button"
+              tabIndex={0}
               className="settings-option w-full hover:bg-zinc-800 rounded-lg p-2.5 gap-2 font-semibold cursor-pointer hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center"
               onClick={() => {
                 o.action();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  o.action();
+                }
               }}
             >
               <div className="settings-option-icon">{o.icon}</div>

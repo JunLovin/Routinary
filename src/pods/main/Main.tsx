@@ -51,7 +51,7 @@ export default function Main() {
         keywords: 'settings preferences configuration account',
         section: 'Navigation',
         perform: () => {
-          navigate(`/main/${user?.id}/settings`);
+          navigate(`/main/${user?.id}/settings/account`);
         },
       },
       {

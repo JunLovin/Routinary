@@ -79,7 +79,7 @@ export default function TopBar() {
         if (currentRoutine) {
           return currentRoutine.title;
         }
-        break;
+        return '';
     }
   };
 
