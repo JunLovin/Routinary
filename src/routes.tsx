@@ -8,6 +8,11 @@ import Chat from './pods/main/chat/Chat';
 import Help from './pods/main/help/Help';
 import Categories from './pods/main/help/components/Categories';
 import Article from './pods/main/help/components/articles/Article';
+import Settings from './pods/main/settings/Settings';
+import Account from './pods/main/settings/account/Account';
+import Appearance from './pods/main/settings/appearance/Appearance';
+import Security from './pods/main/settings/security/Security';
+import { Navigate } from 'react-router-dom';
 
 const routes = [
   {
@@ -58,6 +63,16 @@ const routes = [
             children: [
               { path: 'new', element: <Chat /> },
               { path: ':chatId', element: <Chat /> },
+            ],
+          },
+          {
+            path: 'settings',
+            element: <Settings />,
+            children: [
+              { index: true, element: <Navigate to="account" replace /> },
+              { path: 'account', element: <Account /> },
+              { path: 'appearance', element: <Appearance /> },
+              { path: 'security', element: <Security /> },
             ],
           },
         ],
