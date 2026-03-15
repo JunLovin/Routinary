@@ -164,7 +164,13 @@ export default function Chat() {
             ref={textareaRef}
             rows={1}
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)! || setTranscript(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPrompt(value);
+              if (isListening) {
+                setTranscript(value);
+              }
+            }}
             onKeyDown={handleKeyDown}
             placeholder={isListening ? 'Listening...' : 'Type your message here...'}
             className="w-full bg-transparent resize-none outline-none text-zinc-100 py-3 pl-4 pr-30 max-h-50 min-h-14 placeholder:text-zinc-500 block"

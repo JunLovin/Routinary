@@ -81,15 +81,13 @@ export default function Categories() {
             onClick={() => handleClickCategory(category)}
             disabled={category.disabled}
             className="
-    w-full text-left p-4 rounded-lg border transition-all
-    /* Estado Activo */
+    w-full text-left p-4 rounded-lg border transition-all group
     bg-zinc-900 border-zinc-800 hover:bg-zinc-800 cursor-pointer
-    /* Estado Disabled */
     disabled:opacity-50 disabled:bg-zinc-950 disabled:border-zinc-900
     disabled:cursor-not-allowed disabled:grayscale-[0.5]
   "
           >
-            <h3 className="text-lg font-semibold text-zinc-100 disabled:text-zinc-500">
+            <h3 className="text-lg font-semibold text-zinc-100 group-disabled:text-zinc-500">
               {category.type}
             </h3>
             <p className="text-sm text-zinc-500 mt-1">

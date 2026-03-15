@@ -51,7 +51,7 @@ export const useUserStore = create<State & Actions>()(
           state.error = err.message;
           state.isLoading = false;
         });
-        throw error;
+        throw err;
       }
     },
 
@@ -80,7 +80,7 @@ export const useUserStore = create<State & Actions>()(
           state.error = err.message;
           state.isLoading = false;
         });
-        throw error;
+        throw err;
       }
     },
 
@@ -107,7 +107,7 @@ export const useUserStore = create<State & Actions>()(
           state.error = err.message;
           state.isLoading = false;
         });
-        throw error;
+        throw err;
       }
     },
   })),

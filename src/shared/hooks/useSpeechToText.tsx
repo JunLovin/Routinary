@@ -3,12 +3,18 @@ import { useEffect, useRef, useState } from 'react';
 export const useSpeechToText = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+      setIsSupported(false);
+      return;
+    };
+
+    setIsSupported(true);
 
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.continuous = true;
@@ -24,9 +30,23 @@ export const useSpeechToText = () => {
     };
 
     recognitionRef.current.onend = () => setIsListening(false);
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (error) {
+          // ignore
+        }
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current = null;
+      }
+    };
   }, []);
 
   const toggleRecording = () => {
+    if (!isSupported || !recognitionRef.current) return;
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -37,5 +57,5 @@ export const useSpeechToText = () => {
     }
   };
 
-  return { isListening, transcript, toggleRecording, setTranscript };
+  return { isListening, isSupported, transcript, toggleRecording, setTranscript };
 };

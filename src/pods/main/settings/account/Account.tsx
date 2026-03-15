@@ -37,6 +37,14 @@ export default function Account() {
         });
         return;
       }
+
+      if (!token) {
+        setError('root', {
+          message: 'Authentication token is missing. Please log in again.',
+        });
+        return;
+      }
+
       await updateUser(user.id, token!, data);
 
       setIsEditing(false);
@@ -80,7 +88,7 @@ export default function Account() {
                 placeholder="email@example.com"
                 autoComplete="off"
                 readOnly={!isEditing}
-                id="name"
+                id="email"
               />
               {errors.email && (
                 <span className="text-sm text-red-500 mt-1">{errors.email.message}</span>
@@ -89,6 +97,7 @@ export default function Account() {
           </div>
           {!isEditing ? (
             <button
+              type="button"
               className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 cursor-pointer transition-colors duration-300 disabled:bg-orange-300"
               onClick={handleEdit}
               disabled={isSubmitting}
@@ -105,6 +114,7 @@ export default function Account() {
                   Save Changes
               </button>
               <button
+                type="button"
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-orange-600 cursor-pointer transition-colors duration-300 disabled:bg-orange-300"
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
