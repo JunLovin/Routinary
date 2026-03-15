@@ -79,10 +79,20 @@ export default function Categories() {
           <button
             key={category.id}
             onClick={() => handleClickCategory(category)}
-            className="w-full text-left cursor-pointer bg-zinc-900 border border-zinc-800 rounded-lg p-4 hover:bg-zinc-800 transition-colors"
+            disabled={category.disabled}
+            className="
+    w-full text-left p-4 rounded-lg border transition-all group
+    bg-zinc-900 border-zinc-800 hover:bg-zinc-800 cursor-pointer
+    disabled:opacity-50 disabled:bg-zinc-950 disabled:border-zinc-900
+    disabled:cursor-not-allowed disabled:grayscale-[0.5]
+  "
           >
-            <h3 className="text-lg font-semibold">{category.type}</h3>
-            <p className="text-sm text-zinc-500 mt-1">Find articles related to {category.description?.toLowerCase()}</p>
+            <h3 className="text-lg font-semibold text-zinc-100 group-disabled:text-zinc-500">
+              {category.type}
+            </h3>
+            <p className="text-sm text-zinc-500 mt-1">
+    Find articles related to {category.description?.toLowerCase()}
+            </p>
           </button>
         ))}
       </div>

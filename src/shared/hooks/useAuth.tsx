@@ -2,6 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { User } from '@/shared/models/user.model';
 import type { NavigateFunction } from 'react-router-dom';
 import { loginService, registerService, type LoginFields, type RegisterFields } from '@/shared/services/auth.services';
+import { useUserStore } from '../stores/user.store';
 
 interface AuthContextType {
   user: User | null;
@@ -15,7 +16,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType| null>(null);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const setUser = useUserStore((state) => state.setUser);
+  const [user, setAuthUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   const isAuthenticated = user !== null && token !== null;
@@ -24,6 +26,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     try {
       const user = await registerService(data);
       if (!user) return;
+
+      setAuthUser(user);
       setUser(user);
       navigate('/auth/login', { replace: true });
     } catch (error) {
@@ -39,6 +43,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       setToken(token);
+      setAuthUser(user);
       setUser(user);
       navigate(`/main/${user.id}/chat/new`, { replace: true });
     } catch (error) {
@@ -49,6 +54,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = (navigate: NavigateFunction) => {
     setToken(null);
+    setAuthUser(null);
     setUser(null);
     navigate('/auth/login', { replace: true });
   };

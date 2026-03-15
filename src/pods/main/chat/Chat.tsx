@@ -7,10 +7,12 @@ import { useChatStore } from '@/shared/stores/chat.store';
 import { useRoutineStore } from '@/shared/stores/routine.store';
 import type { Message } from '@/shared/models/message.model';
 import MessageLoadingSpinner from '@/shared/components/MessageLoadingSpinner';
+import { useSpeechToText } from '@/shared/hooks/useSpeechToText';
 
 export default function Chat() {
   const { userId, chatId } = useParams<{ userId: string; chatId?: string }>();
   const { token } = useAuth();
+  const { isListening, transcript, toggleRecording, setTranscript } = useSpeechToText();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,6 +34,12 @@ export default function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const hasSentInitialMessage = useRef(false);
+
+  useEffect(() => {
+    if (isListening && transcript) {
+      setPrompt(transcript);
+    }
+  }, [transcript, isListening]);
 
   useEffect(() => {
     if (initialMessage && !hasSentInitialMessage.current) {
@@ -77,7 +85,7 @@ export default function Chat() {
   }, [prompt]);
 
   const handleSendMessage = async (message?: string) => {
-    if (!(message || prompt).trim()) return;
+    if (!(message || prompt).trim() && !isListening) return;
 
     const tempId = `temp-${Date.now()}`;
     const messageContent = prompt;
@@ -156,34 +164,43 @@ export default function Chat() {
             ref={textareaRef}
             rows={1}
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPrompt(value);
+              if (isListening) {
+                setTranscript(value);
+              }
+            }}
             onKeyDown={handleKeyDown}
-            placeholder="Write your perfect day..."
+            placeholder={isListening ? 'Listening...' : 'Type your message here...'}
             className="w-full bg-transparent resize-none outline-none text-zinc-100 py-3 pl-4 pr-30 max-h-50 min-h-14 placeholder:text-zinc-500 block"
           />
 
           <div className="absolute right-3 bottom-3 flex items-center gap-1">
             <button
+              disabled={true}
               aria-label="Attach Image"
-              className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
+              className="p-2 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed text-zinc-400 hover:text-zinc-100 transition-colors"
             >
               <ImageIcon size={20} />
             </button>
             <button
+              disabled={true}
               aria-label="Attach File"
-              className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
+              className="p-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-zinc-400 hover:text-zinc-100 transition-colors"
             >
               <Paperclip size={20} />
             </button>
             <button
               aria-label="Send Audio"
+              onClick={toggleRecording}
               className="p-2 cursor-pointer text-zinc-400 hover:text-zinc-100 transition-colors"
             >
               <Mic size={20} />
             </button>
             <button
               onClick={() => handleSendMessage()}
-              disabled={!prompt.trim()}
+              disabled={!prompt.trim() && !isListening}
               className="ml-1 cursor-pointer p-2.5 bg-zinc-100 text-zinc-950 rounded-full disabled:bg-zinc-800 disabled:text-zinc-600 transition-all active:scale-95"
               aria-label="Send Message"
             >

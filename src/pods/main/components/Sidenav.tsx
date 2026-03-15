@@ -7,11 +7,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import Dropdown from '@/shared/components/ui/dropdown/Dropdown';
 import { useChatStore } from '@/shared/stores/chat.store';
+import { useUserStore } from '@/shared/stores/user.store';
 
 export default function Sidenav() {
-  const { user, logout, token } = useAuth();
+  const { logout, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const user = useUserStore((state) => state.user);
 
   const isSending = useChatStore((state) => state.isSending);
   const currentRoutine = useRoutineStore((state) => state.currentRoutine);
@@ -233,12 +236,11 @@ export default function Sidenav() {
         </Dropdown.Trigger>
         <Dropdown.Content>
           <Dropdown.Item
-            onClick={() => {
-              logout(navigate);
-              setCurrentRoutine(null);
-            }}
+            className="w-full"
+            as={Link}
+            to="/"
           >
-              Logout
+            Landing
           </Dropdown.Item>
           <Dropdown.Item
             className="w-full"
@@ -249,11 +251,12 @@ export default function Sidenav() {
               Settings
           </Dropdown.Item>
           <Dropdown.Item
-            className="w-full"
-            as={Link}
-            to="/"
+            onClick={() => {
+              logout(navigate);
+              setCurrentRoutine(null);
+            }}
           >
-              Landing
+            Logout
           </Dropdown.Item>
         </Dropdown.Content>
       </Dropdown>

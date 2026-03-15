@@ -18,4 +18,5 @@ export interface Category {
   articles: Article[];
   description?: string;
   order: number;
+  disabled?: boolean;
 }
