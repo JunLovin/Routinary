@@ -112,6 +112,7 @@ export const categories: Category[] = [
     articles: [],
     description: 'Solutions to common problems and issues you may encounter while using our product.',
     order: 2,
+    disabled: true,
   },
   {
     id: 'best-practices',
@@ -119,5 +120,6 @@ export const categories: Category[] = [
     articles: [],
     description: 'Tips and recommendations to help you get the most out of our product and improve your workflow.',
     order: 3,
+    disabled: true,
   },
 ];

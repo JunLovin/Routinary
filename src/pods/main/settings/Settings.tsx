@@ -9,6 +9,7 @@ interface SettingOption {
   icon?: React.ReactNode;
   action: () => void;
   active: boolean;
+  disabled?: boolean;
 }
 
 export default function Settings() {
@@ -40,6 +41,7 @@ export default function Settings() {
         navigate(`/main/${user?.id}/settings/appearance`);
       },
       active: true,
+      disabled: true,
     },
     {
       label: 'Security',
@@ -49,6 +51,7 @@ export default function Settings() {
         navigate(`/main/${user?.id}/settings/security`);
       },
       active: true,
+      disabled: true,
     },
   ];
 
@@ -59,13 +62,17 @@ export default function Settings() {
           {settingsOptions.map((o) => (
             <div
               key={o.label}
+              title={o.disabled ? 'Coming Soon' : o.description}
               role="button"
               tabIndex={0}
-              className="settings-option w-full hover:bg-zinc-800 rounded-lg p-2.5 gap-2 font-semibold cursor-pointer hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center"
+              className={`settings-option select-none w-full hover:bg-zinc-700 rounded-lg p-2.5 gap-2 font-semibold cursor-pointer hover:text-orange-500 hover:border-orange-500/30 transition-all flex items-center ${o.disabled ? '!cursor-not-allowed opacity-50' : ''}`}
               onClick={() => {
+                if (o.disabled) return;
                 o.action();
               }}
+              aria-disabled={o.disabled}
               onKeyDown={(e) => {
+                if (o.disabled) return;
                 if (e.key === 'Enter' || e.key === ' ') {
                   o.action();
                 }
