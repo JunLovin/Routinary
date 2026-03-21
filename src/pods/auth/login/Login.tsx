@@ -79,14 +79,14 @@ export default function Login() {
             )}
           </div>
 
-          <div className="w-full flex items-center justify-between mt-1">
-            <label className="flex items-center gap-2 cursor-pointer group">
+          <div className="w-full flex items-center justify-end mt-1">
+            {/*<label className="flex items-center gap-2 cursor-pointer group">
               <input type="checkbox" className="accent-orange-500 size-4 rounded border-neutral-300 cursor-pointer" />
               <span className="text-sm text-neutral-600 group-hover:text-neutral-800 transition-colors">Remember me</span>
             </label>
             <Link to="/auth/forgot-password" className="text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors">
               Forgot password?
-            </Link>
+            </Link>*/}
           </div>
 
           {errors.root && (
